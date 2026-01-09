@@ -1,0 +1,1 @@
+# RabbitMQApp_net10
