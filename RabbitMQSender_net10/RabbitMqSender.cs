@@ -1,4 +1,5 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
 
@@ -9,10 +10,12 @@ namespace RabbitMQSender_net10
 		private readonly IConnection _connection;
 		private readonly IModel _channel;
 		private readonly RabbitMqOptions _options;
+		private readonly ILogger<RabbitMqSender> _logger;
 
-		public RabbitMqSender(RabbitMqOptions options)
+		public RabbitMqSender(RabbitMqOptions options,ILogger<RabbitMqSender> logger)
 		{
 			_options = options;
+			_logger = logger;
 
 			var factory = new ConnectionFactory
 			{
@@ -48,6 +51,7 @@ namespace RabbitMQSender_net10
 				routingKey: _options.Queue,
 				basicProperties: props,
 				body: body);
+			_logger.LogInformation($"Sent message of type {typeof(T).Name} to RabbitMQ.");
 		}
 
 		public void Dispose()
